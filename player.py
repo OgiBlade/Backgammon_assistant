@@ -1,8 +1,9 @@
 import numpy as np
 from random import randint
 #privremeno je tabla ovde kasnije se pomera
+
 board1 = np.zeros(26, dtype = int)
-'''board1[1]  = -2
+board1[1]  = -2
 board1[6]  =  5
 board1[8]  =  3
 board1[12] = -5
@@ -10,7 +11,7 @@ board1[13] =  5
 board1[17] = -3
 board1[19] = -5
 board1[24] =  2
-'''
+
 
 
 
@@ -33,9 +34,29 @@ class Player():
         print(dice)
         return dice
 
+#provera da li igrac moze da izbacuje iz igre zetone
+
+    def Bearing_off(self, board, player):
+        index = np.nonzero(board)
+        bearing = True
+        if(player.name == "w"):
+            for space in index[0]:
+                if(space>6 and board[space] > 0):
+                    bearing = False
+                    break
+        
+        else:
+            for space in index[0]:
+                if(space <19 and board[space]<0):
+                    bearing = False
+                    break
+
+
+        return bearing
+
+
     def genMoves(self, board, die, bearing):
         index = np.nonzero(board)
-
         if(self.name == "w"):
             bar = board[25]
         else:
@@ -160,6 +181,35 @@ class Player():
 
 
 
+    def Take_turn(self, player, dice, board):
+        board2 = self.board
+        possible_moves = []
+        if len(dice) == 4:
+            possible_moves_1 = []
+            possible_moves_2 = []
+            possible_moves_3 = []
+
+            possible_moves_1.append(self.genMoves(board2, dice[0], self.Bearing_off))
+            for table_n in possible_moves_1[0]:
+                possible_moves_2.append(self.genMoves(table_n, dice[0], self.Bearing_off))
+            for i in range (len(possible_moves_2)):
+                for table_n in possible_moves_2[i]:
+                    possible_moves_3.append(self.genMoves(table_n, dice[0], self.Bearing_off))
+            for i in range (len(possible_moves_3)):
+                for table_n in possible_moves_3[i]:
+                        possible_moves.append(self.genMoves(table_n, dice[0], self.Bearing_off))
+            
+        else:
+            possible_moves.append(-1)
+        return possible_moves
+        
+        
+
+x = Player("w", board1)
+dice = [5, 5, 5, 5]
+#print(dice)
+niz = x.Take_turn(x,dice, x.board)
+#print(niz)
 
 
 

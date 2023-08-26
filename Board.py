@@ -19,7 +19,7 @@ class Board():
         self.board = board
 
     #provera da li je igrac zavrsio
-    def Finished(board, Player):
+    def Finished(self, board, Player):
         index = np.nonzero(board)
         Finish = True
         if(Player.name == "w"):
@@ -34,24 +34,3 @@ class Board():
                     Finish = False
                     break
 
-
-    #provera da li igrac moze da izbacuje iz igre zetone
-    def Bearing_off(board, Player):
-        index = np.nonzero(board)
-        bearing = True
-        if(Player.name == "w"):
-            for space in index[0]:
-                if(space>6 and board[space] > 0):
-                    bearing = False
-                    break
-        
-        else:
-            for space in index[0]:
-                if(space <19 and board[space]<0):
-                    bearing = False
-                    break
-
-
-        return bearing
-
-        
