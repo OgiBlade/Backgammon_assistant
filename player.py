@@ -200,16 +200,27 @@ class Player():
                         possible_moves.append(self.genMoves(table_n, dice[0], self.Bearing_off))
             
         else:
-            possible_moves.append(-1)
+            possible_moves_1 = []
+            possible_moves_2 = []
+            possible_moves_1.append(self.genMoves(board2, dice[0], self.Bearing_off))
+            for table_n in possible_moves_1[0]:
+                possible_moves.append(self.genMoves(table_n, dice[1], self.Bearing_off))
+            
+            possible_moves_2.append(self.genMoves(board2, dice[0], self.Bearing_off))
+            for table_n in possible_moves_1[0]:
+                possible_moves.append(self.genMoves(table_n, dice[1], self.Bearing_off))
+            
+
+
         return possible_moves
         
         
 
 x = Player("w", board1)
-dice = [5, 5, 5, 5]
+
 #print(dice)
-niz = x.Take_turn(x,dice, x.board)
-#print(niz)
+niz = x.Take_turn(x,x.DiceRoll(), x.board)
+print(niz)
 
 
 
