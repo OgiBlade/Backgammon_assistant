@@ -1,18 +1,6 @@
 import numpy as np
-from random import randint
-#privremeno je tabla ovde kasnije se pomera
+from random import randint, choice 
 
-board1 = np.zeros(26, dtype = int)
-board1[1]  =  5
-board1[3]  = 4
-#board1[6]  =  5
-#board1[8]  =  3
-board1[12] = -5
-#board1[13] =  5
-board1[17] = -3
-board1[25] = 0
-#board1[19] = -5
-#board1[24] =  2
 
 
 
@@ -26,15 +14,7 @@ class Player():
         self.name = name
         self.board = board
     
-    #random generacija kockica, ako je isti broj na obe, racuna se kao 4
-    def DiceRoll(self):
-        
-        dice = [randint(1, 6), randint(1, 6)]
-        if(dice[0] == dice[1]):
-            dice.append(dice[0])
-            dice.append(dice[0])
-        print(dice)
-        return dice
+
 
 #provera da li igrac moze da izbacuje iz igre zetone
 
@@ -145,7 +125,7 @@ class Player():
                        
                         board2[space+die] = -1
                         board2[space]+= 1
-                        board2[0] +=1
+                        board2[25] +=1
                         new_states.append(board2)
                 #crni zavrsava
                 elif (bearing == True and board2[space] <0):
@@ -176,7 +156,7 @@ class Player():
                 elif(board2[space]<0 and  space + die <25 and board2[space+die] <= 0):
                   
                     
-                    board2[space-die] -=1
+                    board2[space+die] -=1
                     board2[space] += 1
                     new_states.append(board2)
         if(len(new_states) == 0):
@@ -186,7 +166,8 @@ class Player():
 
 
     def Take_turn(self, player, dice, board):
-        board2 = self.board
+        board2 = board
+        moves = []
         possible_moves = []
         if len(dice) == 4:
             possible_moves_1 = []
@@ -213,15 +194,100 @@ class Player():
             possible_moves_2.append(self.genMoves(board2, dice[1], self.Bearing_off(board2, player)))
             for table_n in possible_moves_2[0]:
                 possible_moves.append(self.genMoves(table_n, dice[0], self.Bearing_off(table_n, player)))
-            
-
-
-        return possible_moves
         
         
+        
+        for i in range (len(possible_moves)):
+                for j in range (len(possible_moves[i])):
+                    for table_n in possible_moves[j]:
+                            moves.append(table_n)
 
-x = Player("w", board1)
+        return moves
 
+
+def Board_init():
+    board = np.zeros(26, dtype = int)
+    board[1]  = -2
+    board[6]  =  5
+    board[8]  =  3
+    board[12] = -5
+    board[13] =  5
+    board[17] = -3
+    board[19] = -5
+    board[24] =  2
+    return board
+#provera zavrsetka igre
+def Finished(board, Player):
+    index = np.nonzero(board)
+    Finish = True
+    if(Player.name == "w"):
+        for space in index[0]:
+            if(board[space]>0):
+                Finish = False
+                break
+        
+    else:
+        for space in index[0]:
+            if(board[space] <0):
+                Finish = False
+                break
+    return Finish    
+    #random generacija kockica, ako je isti broj na obe, racuna se kao 4
+def DiceRoll():
+        
+    dice = [randint(1, 6), randint(1, 6)]
+    if(dice[0] == dice[1]):
+        dice.append(dice[0])
+        dice.append(dice[0])
+    print(dice)
+    return dice
+
+def bot_vs_bot():
+    board = Board_init()
+    player_1 = Player("w",board)
+    player_2 = Player("b", board)
+    dice = DiceRoll()
+    while(len(dice)==4):
+        dice = DiceRoll()
+        
+    if(dice[0]<dice[1]):
+            player_1.name = "b"
+            player_2.name = "w"
+
+    print("Player 1: ")
+    while(Finished(board, player_2) == False):
+        
+        
+        moves = []
+        moves =player_1.Take_turn(player_1,dice, board)
+        board = choice(moves)
+        print(board)
+        if(Finished(board, player_1) == True):
+            print("Win for player 1!!")
+            return
+        print("Player 2:")
+        dice = DiceRoll()
+        moves = []
+        moves = player_2.Take_turn(player_2, dice, board)
+        board = choice(moves)
+        print(board)
+        print("Player 1: ")
+        dice = DiceRoll()
+    print("Win for player 2!!!")
+    return
+
+        
+         
+
+
+
+    
+
+   
+        
+
+
+bot_vs_bot()
 #print(dice)
-niz = x.Take_turn(x,[2,4], x.board)
-print(niz)
+#niz = x.Take_turn(x,[2,4], x.board)
+#print(niz)

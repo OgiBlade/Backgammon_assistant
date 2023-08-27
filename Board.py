@@ -1,6 +1,6 @@
 import numpy as np
 from  random import random
-from player import Player 
+
 
 class Board():
 
@@ -19,5 +19,5 @@ class Board():
         self.board = board
 
     #provera da li je igrac zavrsio
-    
+
 
