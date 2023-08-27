@@ -19,18 +19,5 @@ class Board():
         self.board = board
 
     #provera da li je igrac zavrsio
-    def Finished(self, board, Player):
-        index = np.nonzero(board)
-        Finish = True
-        if(Player.name == "w"):
-            for space in index[0]:
-                if(board[space]>0):
-                    Finish = False
-                    break
-        
-        else:
-            for space in index[0]:
-                if(board[space] <0):
-                    Finish = False
-                    break
+    
 

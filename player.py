@@ -3,14 +3,16 @@ from random import randint
 #privremeno je tabla ovde kasnije se pomera
 
 board1 = np.zeros(26, dtype = int)
-board1[1]  = -2
-board1[6]  =  5
-board1[8]  =  3
+board1[1]  =  5
+board1[3]  = 4
+#board1[6]  =  5
+#board1[8]  =  3
 board1[12] = -5
-board1[13] =  5
+#board1[13] =  5
 board1[17] = -3
-board1[19] = -5
-board1[24] =  2
+board1[25] = 0
+#board1[19] = -5
+#board1[24] =  2
 
 
 
@@ -102,7 +104,7 @@ class Player():
 
                     else:
                         test = True
-                        for i in range(6, space, -1):
+                        for i in range(6, space+1, -1):
                             if (board2[i]>0):
                                 test = False
                         
@@ -177,6 +179,8 @@ class Player():
                     board2[space-die] -=1
                     board2[space] += 1
                     new_states.append(board2)
+        if(len(new_states) == 0):
+            new_states.append(board)    
         return np.array(new_states)
 
 
@@ -189,26 +193,26 @@ class Player():
             possible_moves_2 = []
             possible_moves_3 = []
 
-            possible_moves_1.append(self.genMoves(board2, dice[0], self.Bearing_off))
+            possible_moves_1.append(self.genMoves(board2, dice[0], self.Bearing_off(board2, player)))
             for table_n in possible_moves_1[0]:
-                possible_moves_2.append(self.genMoves(table_n, dice[0], self.Bearing_off))
+                possible_moves_2.append(self.genMoves(table_n, dice[0], self.Bearing_off(table_n, player)))
             for i in range (len(possible_moves_2)):
                 for table_n in possible_moves_2[i]:
-                    possible_moves_3.append(self.genMoves(table_n, dice[0], self.Bearing_off))
+                    possible_moves_3.append(self.genMoves(table_n, dice[0], self.Bearing_off(table_n, player)))
             for i in range (len(possible_moves_3)):
                 for table_n in possible_moves_3[i]:
-                        possible_moves.append(self.genMoves(table_n, dice[0], self.Bearing_off))
+                        possible_moves.append(self.genMoves(table_n, dice[0], self.Bearing_off(table_n, player)))
             
         else:
             possible_moves_1 = []
             possible_moves_2 = []
-            possible_moves_1.append(self.genMoves(board2, dice[0], self.Bearing_off))
+            possible_moves_1.append(self.genMoves(board2, dice[0], self.Bearing_off(board2, player)))
             for table_n in possible_moves_1[0]:
-                possible_moves.append(self.genMoves(table_n, dice[1], self.Bearing_off))
+                possible_moves.append(self.genMoves(table_n, dice[1], self.Bearing_off(table_n, player)))
             
-            possible_moves_2.append(self.genMoves(board2, dice[0], self.Bearing_off))
-            for table_n in possible_moves_1[0]:
-                possible_moves.append(self.genMoves(table_n, dice[1], self.Bearing_off))
+            possible_moves_2.append(self.genMoves(board2, dice[1], self.Bearing_off(board2, player)))
+            for table_n in possible_moves_2[0]:
+                possible_moves.append(self.genMoves(table_n, dice[0], self.Bearing_off(table_n, player)))
             
 
 
@@ -219,17 +223,5 @@ class Player():
 x = Player("w", board1)
 
 #print(dice)
-niz = x.Take_turn(x,x.DiceRoll(), x.board)
+niz = x.Take_turn(x,[2,4], x.board)
 print(niz)
-
-
-
-
-
-
-
-
-
-
-
-
