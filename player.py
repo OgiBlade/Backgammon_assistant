@@ -2,12 +2,6 @@ import numpy as np
 from random import randint, choice 
 
 
-
-
-
-
-
-
 class Player():
     #inicijalizacija playera, u name ide b/w (black/white)
     def __init__(self, name, board):
@@ -174,7 +168,7 @@ class Player():
             possible_moves_1 = []
             possible_moves_2 = []
             possible_moves_3 = []
-
+            #racunanje svih mogucih poteza za double roll
             possible_moves_1.append(self.genMoves(board2, dice[0], self.Bearing_off(board2, player)))
             for j in range (len(possible_moves_1)):
                 for table_n in possible_moves_1[j]:
@@ -233,7 +227,7 @@ class Player():
             possible_moves_1_2 = []
             possible_moves_2 = []
             possible_moves_2_1 =[]
-
+            #racunanje kombinacija prva,druga i druga, prva kockica, i stavljanje u niz
             possible_moves_1.append(self.genMoves(board2, dice[0], self.Bearing_off(board2, player)))
            
             
@@ -337,7 +331,7 @@ def bot_vs_bot():
             player_2.name = "w"
 
     print("Player 1: ")
-    while(Finished(board, player_2) == False):
+    while(True):
         i+=1
         
         moves = []
@@ -355,43 +349,16 @@ def bot_vs_bot():
         moves = player_2.Take_turn(player_2, dice, board)
         board = choice(moves)
         print(board)
+        if(Finished(board, player_2) == True):
+            print("Win for player 2!!")
+            print("Game lasted ", i, "moves")
+            return
         print("Player 1: ")
         dice = DiceRoll()
-    print("Win for player 2!!!")
-
-    print("Game lasted ", i, "moves")
+    
     return
 
         
          
 
-
-
-    
-
-board = Board_init()
-beli = Player("w", board)
-
-
-
-niz = beli.genMoves(board, 3, False)
-
-niz2 = []
-
-moves = []
-for i in range(np.shape(niz)[0]):
-    moves.append(beli.genMoves(board, 4, False))
-
-if(len(np.shape(moves))==3):
-
-    for j in range (len(moves[0])):
-        for table_n in moves[j]:
-            niz2.append(table_n)
-
-
-#print(len(niz))
 bot_vs_bot()
-
-#print(dice)
-#niz = beli.Take_turn(beli,[2,4], beli.board)
-#print(niz)
