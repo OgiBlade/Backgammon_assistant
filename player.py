@@ -2,6 +2,10 @@ import numpy as np
 from random import randint, choice 
 
 
+bar_value = 30
+end_zone_value = 3
+solo_value = 50
+
 class Player():
     #inicijalizacija playera, u name ide b/w (black/white)
     def __init__(self, name, board):
@@ -280,6 +284,78 @@ class Player():
         return moves
 
 
+def Solo(player, board, space_id):
+    solo = False
+    index = np.nonzero(board)
+    if(player == "w"):
+        for space in index[0]:
+            if(board[space] < 0):
+                solo = True
+                return solo
+    
+    if(player == "b"):
+        for space in index[0]:
+            if(board[space] > 0):
+                solo = True
+                return solo
+    
+    return solo
+            
+                
+
+def Calc_Rewards(player, board):
+    reward = 0
+    pip = 0
+    if player.name == "w":
+        if(board[25] != 0):
+            reward -= board[25] * bar_value
+        if(board[0] != 0):
+            reward += board[0] * bar_value
+
+
+        for space in board[1:7]:
+            reward += end_zone_value
+        for space in board[19:25]:
+            reward -= end_zone_value
+
+        index = np.nonzero(board)
+        for space in index[0]:
+            if board[space]== 1:
+                if(Solo("w", board, space)):
+                    reward -= solo_value
+            if board[space] >0:
+                pip+=space * board[space]
+    
+    if player.name == "b":
+        if(board[25] != 0):
+            reward += board[25] * bar_value
+        if(board[0] != 0):
+            reward -= board[0] * bar_value
+
+
+        for space in board[1:7]:
+            reward -= end_zone_value
+        for space in board[19:25]:
+            reward += end_zone_value
+
+        index = np.nonzero(board)
+        for space in index[0]:
+            if board[space]== -1:
+                if(Solo("b", board, space)):
+                    reward -= solo_value
+            if board[space] <0:
+                pip += abs((space -25) *board[space])
+
+
+    return reward, pip
+        
+
+
+        
+
+
+
+
 def Board_init():
     board = np.zeros(26, dtype = int)
     board[1]  = -2
@@ -337,6 +413,7 @@ def bot_vs_bot():
         moves = []
         moves =player_1.Take_turn(player_1,dice, board)
         board = choice(moves)
+        
         print(board)
         if(Finished(board, player_1) == True):
             print("Win for player 1!!")

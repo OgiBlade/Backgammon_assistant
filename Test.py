@@ -16,6 +16,9 @@ board1[17] = -3
 board1[19] = -5
 board1[24] =  2
 
+for space in board1[19:25]:
+    print(space)
+
 #print(dice)
 #for die in dice:
 #    print(die)
