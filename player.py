@@ -168,6 +168,7 @@ class Player():
     def Take_turn(self, player, dice, board):
         board2 = board
         moves = []
+        niz2 = []
         possible_moves = []
         if len(dice) == 4:
             possible_moves_1 = []
@@ -175,33 +176,113 @@ class Player():
             possible_moves_3 = []
 
             possible_moves_1.append(self.genMoves(board2, dice[0], self.Bearing_off(board2, player)))
-            for table_n in possible_moves_1[0]:
+            for j in range (len(possible_moves_1)):
+                for table_n in possible_moves_1[j]:
+                    niz2.append(table_n)
+            possible_moves_1 = niz2
+            
+            niz2 = []
+            
+            for table_n in possible_moves_1:
                 possible_moves_2.append(self.genMoves(table_n, dice[0], self.Bearing_off(table_n, player)))
-            for i in range (len(possible_moves_2)):
-                for table_n in possible_moves_2[i]:
-                    possible_moves_3.append(self.genMoves(table_n, dice[0], self.Bearing_off(table_n, player)))
-            for i in range (len(possible_moves_3)):
-                for table_n in possible_moves_3[i]:
-                        possible_moves.append(self.genMoves(table_n, dice[0], self.Bearing_off(table_n, player)))
+            
+            
+
+            for j in range (len(possible_moves_2)):
+                for table_n in possible_moves_2[j]:
+                    niz2.append(table_n)
+            
+            possible_moves_2 = niz2
+            niz2 = []
+            
+
+            for table_n in possible_moves_2:
+                possible_moves_3.append(self.genMoves(table_n, dice[0], self.Bearing_off(table_n, player)))
+            
+            
+
+            for j in range (len(possible_moves_3)):
+                for table_n in possible_moves_3[j]:
+                    niz2.append(table_n)
+            
+            possible_moves_3 = niz2
+            niz2 = []
+
+
+            for table_n in possible_moves_3:
+                possible_moves.append(self.genMoves(table_n, dice[0], self.Bearing_off(table_n, player)))
+            
+          
+
+            for j in range (len(possible_moves)):
+                for table_n in possible_moves[j]:
+                    niz2.append(table_n)
+            
+            possible_moves = niz2
+            
+            niz2 = []
+            moves = possible_moves
+
+
+
+            
+            
             
         else:
             possible_moves_1 = []
+            possible_moves_1_2 = []
             possible_moves_2 = []
-            possible_moves_1.append(self.genMoves(board2, dice[0], self.Bearing_off(board2, player)))
-            for table_n in possible_moves_1[0]:
-                possible_moves.append(self.genMoves(table_n, dice[1], self.Bearing_off(table_n, player)))
-            
-            possible_moves_2.append(self.genMoves(board2, dice[1], self.Bearing_off(board2, player)))
-            for table_n in possible_moves_2[0]:
-                possible_moves.append(self.genMoves(table_n, dice[0], self.Bearing_off(table_n, player)))
-        
-        
-        
-        for i in range (len(possible_moves)):
-                for j in range (len(possible_moves[i])):
-                    for table_n in possible_moves[j]:
-                            moves.append(table_n)
+            possible_moves_2_1 =[]
 
+            possible_moves_1.append(self.genMoves(board2, dice[0], self.Bearing_off(board2, player)))
+           
+            
+
+            for j in range (len(possible_moves_1)):
+                for table_n in possible_moves_1[j]:
+                    niz2.append(table_n)
+                    nizshape = np.shape(niz2)
+            possible_moves_1 = niz2
+            niz2 = []
+            
+            for table_n in possible_moves_1:
+                possible_moves_1_2.append(self.genMoves(table_n, dice[1], self.Bearing_off(table_n, player)))
+            
+
+            for j in range (len(possible_moves_1_2)):
+                for table_n in possible_moves_1_2[j]:
+                    niz2.append(table_n)
+        
+            possible_moves_1_2 = niz2
+            niz2 = []
+             
+
+
+            possible_moves_2.append(self.genMoves(board2, dice[1], self.Bearing_off(board2, player)))
+            for j in range (len(possible_moves_2)):
+                for table_n in possible_moves_2[j]:
+                    niz2.append(table_n)
+            possible_moves_2 = niz2
+            niz2 = []
+            
+
+            for table_n in possible_moves_2:
+                possible_moves_2_1.append(self.genMoves(table_n, dice[0], self.Bearing_off(table_n, player)))
+            
+
+            for j in range (len(possible_moves_2_1)):
+                for table_n in possible_moves_2_1[j]:
+                    niz2.append(table_n)
+            
+            possible_moves_2_1 = niz2
+            niz2 = []
+        
+
+            moves = possible_moves_1_2 + possible_moves_2_1
+        
+
+        
+        
         return moves
 
 
@@ -244,6 +325,7 @@ def DiceRoll():
 
 def bot_vs_bot():
     board = Board_init()
+    i = 0
     player_1 = Player("w",board)
     player_2 = Player("b", board)
     dice = DiceRoll()
@@ -256,7 +338,7 @@ def bot_vs_bot():
 
     print("Player 1: ")
     while(Finished(board, player_2) == False):
-        
+        i+=1
         
         moves = []
         moves =player_1.Take_turn(player_1,dice, board)
@@ -264,8 +346,10 @@ def bot_vs_bot():
         print(board)
         if(Finished(board, player_1) == True):
             print("Win for player 1!!")
+            print("Game lasted ", i, "moves")
             return
         print("Player 2:")
+        i+=1
         dice = DiceRoll()
         moves = []
         moves = player_2.Take_turn(player_2, dice, board)
@@ -274,6 +358,8 @@ def bot_vs_bot():
         print("Player 1: ")
         dice = DiceRoll()
     print("Win for player 2!!!")
+
+    print("Game lasted ", i, "moves")
     return
 
         
@@ -283,11 +369,29 @@ def bot_vs_bot():
 
     
 
-   
-        
+board = Board_init()
+beli = Player("w", board)
 
 
+
+niz = beli.genMoves(board, 3, False)
+
+niz2 = []
+
+moves = []
+for i in range(np.shape(niz)[0]):
+    moves.append(beli.genMoves(board, 4, False))
+
+if(len(np.shape(moves))==3):
+
+    for j in range (len(moves[0])):
+        for table_n in moves[j]:
+            niz2.append(table_n)
+
+
+#print(len(niz))
 bot_vs_bot()
+
 #print(dice)
-#niz = x.Take_turn(x,[2,4], x.board)
+#niz = beli.Take_turn(beli,[2,4], beli.board)
 #print(niz)
