@@ -1,8 +1,7 @@
 import numpy as np
 from random import random
-from player import Player 
 from board import Board
-
+import operator
 
 
 
@@ -16,9 +15,17 @@ board1[17] = -3
 board1[19] = -5
 board1[24] =  2
 
-for space in board1[19:25]:
-    print(space)
-
+triple = (board1, -30, 159)
+triple2 = (board1, 50, 153)
+lista = []
+lista.append(triple)
+lista.append(triple2)
+lista.append(triple2)
+lista.append(triple2)
+lista.append(triple2)
+print(type(lista))
+lista = sorted(lista, reverse = True, key = operator.itemgetter(1))
+print(lista)
 #print(dice)
 #for die in dice:
 #    print(die)

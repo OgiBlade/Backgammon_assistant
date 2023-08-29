@@ -2,9 +2,10 @@ import numpy as np
 from random import randint, choice 
 
 
-bar_value = 30
-end_zone_value = 3
-solo_value = 50
+bar_value = 25
+end_zone_value = -5
+solo_value = -10
+extra_value = 2
 
 class Player():
     #inicijalizacija playera, u name ide b/w (black/white)
@@ -65,7 +66,8 @@ class Player():
                     elif (board2[space] >0):
                         new_states.append(board2)
                 #ako beli moze da uzme crni zeton
-                elif (board2[space] >0 and  space - die >0 and board2[space-die] == -1):
+                
+                elif (board2[space] >0 and  (space - die) >0 and board2[space-die] == -1):
                     board2[space-die] = 1
                     board2[space]-=1
                     board2[0] +=1
@@ -93,7 +95,7 @@ class Player():
 
 
                 #normalan potez
-                elif(board2[space]>0 and  space - die >0 and board2[space-die] >= 0):
+                elif(board2[space]>0 and  (space - die) >0 and board2[space-die] >= 0):
                     board2[space-die] +=1
                     board2[space] -= 1
                     new_states.append(board2)
@@ -313,18 +315,20 @@ def Calc_Rewards(player, board):
             reward += board[0] * bar_value
 
 
-        for space in board[1:7]:
-            reward += end_zone_value
-        for space in board[19:25]:
-            reward -= end_zone_value
+#        for space in board[1:7]:
+#            reward += end_zone_value
+#        for space in board[19:25]:
+#            reward -= end_zone_value
 
         index = np.nonzero(board)
         for space in index[0]:
             if board[space]== 1:
                 if(Solo("w", board, space)):
-                    reward -= solo_value
+                    reward += solo_value
             if board[space] >0:
                 pip+=space * board[space]
+                reward += extra_value * (space // 6 + 1)
+                
     
     if player.name == "b":
         if(board[25] != 0):
@@ -342,7 +346,7 @@ def Calc_Rewards(player, board):
         for space in index[0]:
             if board[space]== -1:
                 if(Solo("b", board, space)):
-                    reward -= solo_value
+                    reward += solo_value
             if board[space] <0:
                 pip += abs((space -25) *board[space])
 
@@ -351,9 +355,24 @@ def Calc_Rewards(player, board):
         
 
 
-        
 
 
+
+def Board_Rewards(player, moves):
+    Rewards = []
+    Pips    = []
+    board_and_rewards = []
+    for space in moves:
+        Reward, pip = Calc_Rewards(player, space)
+        triple = (space, Reward, pip)
+        board_and_rewards .append(triple)
+    board_and_rewards = sorted(board_and_rewards,reverse=True, key=lambda x: (x[1]))
+    print(board_and_rewards)
+    return board_and_rewards[0][0]
+    
+    
+
+    
 
 
 def Board_init():
@@ -393,6 +412,69 @@ def DiceRoll():
     print(dice)
     return dice
 
+def DicePlayer():
+    dice = []
+    die_1, die_2 = int(input()), int(input())
+    
+    dice.append(die_1)
+    dice.append(die_2)
+    if(dice[0] == dice[1]):
+        dice.append(dice[0])
+        dice.append(dice[0])
+    return dice
+
+
+def input_move(player, board, double):
+    if(player.name == "b"):
+        start, end = int(input()), int(input())
+        start = abs(start-25)
+        end   = abs(end - 25)
+        if(start==0):
+            board[start] -=1
+        else:
+            board[start]+=1
+        if(board[end] == 1):
+            board[25]+=1
+            board[end] -= 1
+        board[end]  -=1
+        start, end = int(input()), int(input())
+        start = abs(start-25)
+        end   = abs(end - 25)
+        if(start==0):
+            board[start] -=1
+        else:
+            board[start]+=1
+        if(board[end] == 1):
+            board[25]+=1
+            board[end] -= 1
+        board[end]  -=1
+        if(double == 1):
+            start, end = int(input()), int(input())
+            start = abs(start-25)
+            end   = abs(end - 25)
+            if(start==0):
+                board[start] -=1
+            else:
+                board[start] +=1
+            if(board[end] == 1):
+                board[25]+=1
+                board[end] -= 1
+            board[end]  -=1
+            start, end = int(input()), int(input())
+            start = abs(start-25)
+            end   = abs(end - 25)
+            if(start==0):
+                board[start] -=1
+            else:
+                board[start] +=1
+            if(board[end] == 1):
+                board[25]+=1
+                board[end] -= 1
+            board[end]  -=1
+    return board
+
+
+
 def bot_vs_bot():
     board = Board_init()
     i = 0
@@ -412,8 +494,7 @@ def bot_vs_bot():
         
         moves = []
         moves =player_1.Take_turn(player_1,dice, board)
-        board = choice(moves)
-        
+        board = Board_Rewards(player_1, moves)
         print(board)
         if(Finished(board, player_1) == True):
             print("Win for player 1!!")
@@ -424,7 +505,7 @@ def bot_vs_bot():
         dice = DiceRoll()
         moves = []
         moves = player_2.Take_turn(player_2, dice, board)
-        board = choice(moves)
+        board = Board_Rewards(player_2, moves)
         print(board)
         if(Finished(board, player_2) == True):
             print("Win for player 2!!")
@@ -435,7 +516,51 @@ def bot_vs_bot():
     
     return
 
+def player_vs_player():
+    board = Board_init()
+    i = 0
+    player_1 = Player("w",board)
+    player_2 = Player("b", board)
+    dice = DicePlayer()
+    while(len(dice)==4):
+        dice = DicePlayer()
         
+    if(dice[0]<dice[1]):
+            player_1.name = "b"
+            player_2.name = "w"
+
+    print("Player 1: ")
+    while(True):
+        i+=1
+        if(player_1.name == "b"):
+            board = input_move(player_1, board, int(int(input())))
+        else:
+            moves = []
+            moves =player_1.Take_turn(player_1,dice, board)
+            board = Board_Rewards(player_1, moves)
+        print(board)
+        if(Finished(board, player_1) == True):
+            print("Win for player 1!!")
+            print("Game lasted ", i, "moves")
+            return
+        print("Player 2:")
+        i+=1
+        if(player_2.name == "b"):
+            board = input_move(player_2, board, int(int(input())))
+        else:
+            dice = DicePlayer()
+            moves = []
+            moves = player_2.Take_turn(player_2, dice, board)
+            board = Board_Rewards(player_2, moves)
+        print(board)
+        if(Finished(board, player_2) == True):
+            print("Win for player 2!!")
+            print("Game lasted ", i, "moves")
+            return
+        print("Player 1: ")
+        if(player_1.name == "w"):
+            dice = DicePlayer()
+
          
 
-bot_vs_bot()
+player_vs_player()
